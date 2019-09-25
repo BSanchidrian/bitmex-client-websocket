@@ -10,6 +10,7 @@ using Bitmex.Client.Websocket.Exceptions;
 using Bitmex.Client.Websocket.Json;
 using Bitmex.Client.Websocket.Logging;
 using Bitmex.Client.Websocket.Messages;
+using Bitmex.Client.Websocket.Requests;
 using Bitmex.Client.Websocket.Utils;
 using Bitmex.Client.Websocket.Validations;
 using Websocket.Client;
@@ -35,6 +36,7 @@ namespace Bitmex.Client.Websocket.Client
             _messageReceivedSubscription = _communicator.MessageReceived.Subscribe(HandleMessage);
 
             _channels = new ConcurrentDictionary<Guid, BitmexWebsocketChannel>();
+            //Task.Run(this.PingMonitor);
         }
 
         /// <summary>
@@ -66,6 +68,17 @@ namespace Bitmex.Client.Websocket.Client
             });
             channelSubject.OnNext(channel);
             return channel;
+        }
+
+        public async Task CloseChannel(Guid channelId)
+        {
+            if (_channels.TryRemove(channelId, out BitmexWebsocketChannel channel))
+            {
+                await Send(channel, new MultiplexingMessageBase
+                {
+                    MessageType = MultiplexingMessageType.Unsubscribe
+                });
+            }
         }
 
         public async Task Send(BitmexWebsocketChannel toChannel, MultiplexingMessageBase multiplexingMessage)
@@ -123,6 +136,23 @@ namespace Bitmex.Client.Websocket.Client
             catch (Exception e)
             {
                 Debug.WriteLine("Exception while receiving message");
+            }
+        }
+
+        private async Task PingMonitor()
+        {
+            while (true)
+            {
+                foreach (var bitmexWebsocketChannel in this._channels)
+                {
+                    await this.Send(bitmexWebsocketChannel.Value, new MultiplexingMessageBase
+                    {
+                        MessageType = MultiplexingMessageType.Message,
+                        Payload = new HelpRequest()
+                    });
+                    await Task.Delay(3);
+                }
+                await Task.Delay(10000);
             }
         }
 

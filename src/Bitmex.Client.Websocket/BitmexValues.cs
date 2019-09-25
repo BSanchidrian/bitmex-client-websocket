@@ -13,6 +13,11 @@ namespace Bitmex.Client.Websocket
         public static readonly Uri ApiMultiplexingWebsocketUrl = new Uri("wss://www.bitmex.com/realtimemd");
 
         /// <summary>
+        /// Testnet Bitmex url to multiplexed-websocket API
+        /// </summary>
+        public static readonly Uri ApiMultiplexingTestnetUrl = new Uri("wss://testnet.bitmex.com/realtimemd");
+
+        /// <summary>
         /// Main Bitmex url to websocket API
         /// </summary>
         public static readonly Uri ApiWebsocketUrl = new Uri("wss://www.bitmex.com/realtime");

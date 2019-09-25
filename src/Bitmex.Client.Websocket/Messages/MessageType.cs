@@ -4,6 +4,7 @@
     {
         // Do not rename, used in requests
         Ping,
+        Help,
         AuthKey,
         Subscribe,
         Unsubscribe,
