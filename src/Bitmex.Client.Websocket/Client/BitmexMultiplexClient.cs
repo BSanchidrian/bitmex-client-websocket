@@ -36,7 +36,7 @@ namespace Bitmex.Client.Websocket.Client
             _messageReceivedSubscription = _communicator.MessageReceived.Subscribe(HandleMessage);
 
             _channels = new ConcurrentDictionary<Guid, BitmexWebsocketChannel>();
-            //Task.Run(this.PingMonitor);
+            Task.Run(this.PingMonitor);
         }
 
         /// <summary>
@@ -147,8 +147,8 @@ namespace Bitmex.Client.Websocket.Client
                 {
                     await this.Send(bitmexWebsocketChannel.Value, new MultiplexingMessageBase
                     {
-                        MessageType = MultiplexingMessageType.Message,
-                        Payload = new HelpRequest()
+                        MessageType = MultiplexingMessageType.Subscribe,
+                        Payload = new PingRequest()
                     });
                     await Task.Delay(3);
                 }

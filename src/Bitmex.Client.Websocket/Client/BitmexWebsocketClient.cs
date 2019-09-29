@@ -7,6 +7,7 @@ using Bitmex.Client.Websocket.Requests;
 using Bitmex.Client.Websocket.Validations;
 using Websocket.Client;
 using Bitmex.Client.Websocket.Utils;
+using LogProvider = Bitmex.Client.Websocket.Logging.LogProvider;
 
 namespace Bitmex.Client.Websocket.Client
 {
